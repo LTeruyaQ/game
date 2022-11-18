@@ -138,6 +138,41 @@ function RetangularCollision({rectangel1, rectangel2})  {
     )
 }
 
+function DetermineWinner({player1, player2, timerId}){
+
+    clearTimeout(timerId);
+
+    document.querySelector('#displayText').style.display = 'flex';
+    
+    if(player1.health == player2.health){
+        document.querySelector('#displayText').innerHTML = 'PORRRRRRA';
+    } else if(player1.health > player2.health){
+        document.querySelector('#displayText').innerHTML = 'PORRRRRRA1';
+    } else if(player2.health > player1.health){
+        document.querySelector('#displayText').innerHTML = 'PORRRRRRA2';
+    }
+}
+
+let timer = 100;
+let timerId
+
+function DecreaseTimer(){
+    
+    timerId = setTimeout(DecreaseTimer, 1000)
+    
+    if(timer > 0){
+        timer--
+        document.querySelector('#timer').innerHTML = timer;
+    }
+
+    if(timer == 0)
+        if(player1.health == player2.health){
+            DetermineWinner({player1, player2, timerId})
+        }
+}
+
+DecreaseTimer()
+
 function Animate() {
     window.requestAnimationFrame(Animate);
     c.fillStyle = 'black'
@@ -164,17 +199,21 @@ function Animate() {
         player1.isAttacking = false;
         player2.health -= 20;
 
-        console.log(player1.health)
+        console.log(player2.health)
 
-        document.querySelector('Player2Health').style.width = player1.health + '%';
+        document.querySelector('#Player2Health').style.width = player2.health + '%';
     }
     else if(RetangularCollision({rectangel1: player2, rectangel2: player1}) && player2.isAttacking){
         player2.isAttacking = false;
         player1.health -= 20;
 
-        console.log(player2.health)
+        console.log(player1.health)
 
-        document.querySelector('Player1Health').style.width = player2.health + '%';
+        document.querySelector('#Player1Health').style.width = player1.health + '%';
+    }
+
+    if(player1.health <= 0 || player2.health <= 0){
+        DetermineWinner({player1, player2, timerId});
     }
 }
 
