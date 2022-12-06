@@ -59,6 +59,14 @@ const player1 = new Fighter({
         run: {
             imageSrc: './img/samuraiMack/Run.png',
             framesMax: 8
+        }, 
+        jump: {
+            imageSrc: './img/samuraiMack/Jump.png',
+            framesMax: 2
+        },
+        fall: {
+            imageSrc: './img/samuraiMack/Fall.png',
+            framesMax: 2
         }
     }
 });
@@ -157,19 +165,32 @@ function Animate() {
     player1.velocity.x = 0;
     player2.velocity.x = 0;
 
-    player1.image = player1.sprites.idle.image
+    
     if (keys.a.pressed && player1.lastKey == 'a') {
         player1.velocity.x = -5
-        player1.image = player1.sprites.run.image
+        player1.switchSprite('run');
     } else if (keys.d.pressed && player1.lastKey == 'd') {
         player1.velocity.x = 5
-        player1.image = player1.sprites.run.image
+        player1.switchSprite('run');
     }
+    else{
+        player1.switchSprite('idle');
+    }
+
+    if(player1.velocity.y < 0)
+        player1.switchSprite('jump');
+    else if (player1.velocity.y > 0)
+        player1.switchSprite('fall');
 
     if (keys.ArrowLeft.pressed && player2.lastKey == 'ArrowLeft') {
         player2.velocity.x = -5
     } else if (keys.ArrowRight.pressed && player2.lastKey == 'ArrowRight') {
         player2.velocity.x = 5
+    }
+
+    if(player2.velocity.y < 0){
+        player2.image = player2.sprites.jump.image
+        player2.framesMax = player2.sprites.jump.framesMax
     }
 
     if(RetangularCollision({rectangel1: player1, rectangel2: player2}) && player1.isAttacking){
