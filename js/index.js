@@ -9,74 +9,29 @@ c.fillRect(0, 0, canvas.width, canvas.height)
 
 const gravity = 0.7;
 
-class Sprite {
-    constructor({ position, velocity, color = 'red', offset }) {
-        this.position = position;
-        this.velocity = velocity;
-        this.width = 50;
-        this.height = 150;
-        this.lastKey;
-        this.attackBox = {
-            position: {
-                x: this.position.x,
-                y: this.position.y
-            }, 
-            offset, 
-                width: 100,
-                height: 50
-        };
-        this.color = color;
-        this.isAttacking;
-        this.health = 100;
-    }
+//Posições iniciais do BackGround
+const background = new Sprite
+({
+    position: {
+      x: 0,
+      y: 0
+    },
+    imageSrc: './img/background.png'
+})
 
-    draw() {
-        c.fillStyle = this.color;
-        c.fillRect(this.position.x,
-                   this.position.y,
-                   this.width,
-                   this.height);
-
-        //AttackBox
-        if(this.isAttacking == true){
-        c.fillStyle = 'green';
-        c.fillRect(this.attackBox.position.x,
-                  this.attackBox.position.y,
-                  this.attackBox.width,
-                  this.attackBox.height)
-        }
-    }
-
-    update() {
-        this.draw();
-
-        this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
-        this.attackBox.position.y = this.position.y;
-
-        this.position.y += this.velocity.y
-        this.position.x += this.velocity.x
-
-        if (this.position.y + this.height + this.velocity.y >= canvas.height) {
-            this.velocity.y = 0;
-        } else this.velocity.y += gravity;
-
-        if (this.position.x + this.width + this.velocity.x >= canvas.width) {
-            this.velocity.x = 0;
-        }
-    }
-
-    attack(){
-        this.isAttacking = true;
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 100)
-    }
-}
-
-
+const shop = new Sprite
+({
+    position: {
+      x: 600,
+      y: 128
+    },
+    imageSrc: './img/shop.png',
+    scale: 2.75,
+    framesMax: 6
+})
 
 //Posições iniciais dos playes
-const player1 = new Sprite({
+const player1 = new Fighter({
     position: {
         x: 0,
         y: 0
@@ -88,10 +43,27 @@ const player1 = new Sprite({
     offset: {
         x: 0,
         y: 0
+    },
+    imageSrc: './img/samuraiMack/Idle.png',
+    framesMax: 8,
+    scale: 2.5,
+    offset: {
+        x: 215,
+        y: 157
+    },
+    sprites: {
+        idle: {
+            imageSrc: './img/samuraiMack/Idle.png',
+            framesMax: 8
+        },
+        run: {
+            imageSrc: './img/samuraiMack/Run.png',
+            framesMax: 8
+        }
     }
 });
 
-const player2 = new Sprite({
+const player2 = new Fighter({
     position: {
         x: 400,
         y: 100
@@ -177,16 +149,21 @@ function Animate() {
     window.requestAnimationFrame(Animate);
     c.fillStyle = 'black'
     c.fillRect(0, 0, canvas.width, canvas.height);
+    background.update();
+    shop.update();
     player1.update();
-    player2.update();
+    //player2.update();
 
     player1.velocity.x = 0;
     player2.velocity.x = 0;
 
+    player1.image = player1.sprites.idle.image
     if (keys.a.pressed && player1.lastKey == 'a') {
         player1.velocity.x = -5
+        player1.image = player1.sprites.run.image
     } else if (keys.d.pressed && player1.lastKey == 'd') {
         player1.velocity.x = 5
+        player1.image = player1.sprites.run.image
     }
 
     if (keys.ArrowLeft.pressed && player2.lastKey == 'ArrowLeft') {
